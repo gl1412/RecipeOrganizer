@@ -597,28 +597,44 @@ function hmrAccept(bundle /*: ParcelRequire */ , id /*: string */ ) {
 
 },{}],"6rimH":[function(require,module,exports,__globalThis) {
 var _firebaseJs = require("./firebase.js");
-// Login Function (Google Sign-In)
+// **Check if user is logged in on page load**
+document.addEventListener("DOMContentLoaded", ()=>{
+    const savedEmail = JSON.parse(localStorage.getItem("email"));
+    if (savedEmail) {
+        console.log("User is logged in:", savedEmail);
+        updateUI(true);
+    } else updateUI(false);
+    renderRecipes();
+});
+// **Login Function**
 document.getElementById("login-btn").addEventListener("click", async ()=>{
     try {
         const result = await (0, _firebaseJs.signInWithPopup)((0, _firebaseJs.auth), (0, _firebaseJs.provider));
         localStorage.setItem("email", JSON.stringify(result.user.email));
         console.log("User signed in:", result.user.email);
-        updateUI();
+        updateUI(true);
     } catch (error) {
         console.error("Error during login:", error);
     }
 });
-// Logout Function
+// **Logout Function**
 document.getElementById("logout-btn").addEventListener("click", ()=>{
     (0, _firebaseJs.signOut)((0, _firebaseJs.auth)).then(()=>{
         localStorage.removeItem("email");
         console.log("User signed out");
-        updateUI();
+        updateUI(false);
     }).catch((error)=>console.error("Error during logout:", error));
 });
-// Function to Save Recipes to Firestore
+// **Update UI Based on Login State**
+function updateUI(isLoggedIn) {
+    document.getElementById("login-btn").style.display = isLoggedIn ? "none" : "inline-block";
+    document.getElementById("logout-btn").style.display = isLoggedIn ? "inline-block" : "none";
+    document.getElementById("recipe-form").style.display = isLoggedIn ? "block" : "none";
+    document.getElementById("recipe-list").style.display = "block";
+}
+// **Function to Save Recipes to Firestore**
 async function addRecipeToFirestore(name, ingredients, category) {
-    const email = JSON.parse(localStorage.getItem("email")); // Get user email
+    const email = JSON.parse(localStorage.getItem("email"));
     if (!email) {
         alert("You must be logged in to add recipes!");
         return;
@@ -636,14 +652,17 @@ async function addRecipeToFirestore(name, ingredients, category) {
         console.error("Error adding recipe:", error);
     }
 }
-// Function to Retrieve and Display Recipes from Firestore
+// **Function to Retrieve and Display Recipes from Firestore**
 async function renderRecipes() {
-    const email = JSON.parse(localStorage.getItem("email")); // Get user email
-    if (!email) return;
+    const email = JSON.parse(localStorage.getItem("email"));
+    const recipesList = document.getElementById("recipes");
+    recipesList.innerHTML = "";
+    if (!email) {
+        recipesList.innerHTML = "<p>Please sign in to view your saved recipes.</p>";
+        return;
+    }
     const q = (0, _firebaseJs.query)((0, _firebaseJs.collection)((0, _firebaseJs.db), "recipes"), (0, _firebaseJs.where)("email", "==", email));
     const data = await (0, _firebaseJs.getDocs)(q);
-    const recipesList = document.getElementById("recipes");
-    recipesList.innerHTML = ""; // Clear list before rendering
     data.forEach((docSnap)=>{
         const recipe = docSnap.data();
         const recipeId = docSnap.id;
@@ -660,7 +679,7 @@ async function renderRecipes() {
         recipesList.appendChild(li);
     });
 }
-// Function to Delete a Recipe from Firestore
+// **Function to Delete a Recipe from Firestore**
 async function deleteRecipe(recipeId) {
     if (confirm("Are you sure you want to delete this recipe?")) try {
         await (0, _firebaseJs.deleteDoc)((0, _firebaseJs.doc)((0, _firebaseJs.db), "recipes", recipeId));
@@ -670,7 +689,7 @@ async function deleteRecipe(recipeId) {
         console.error("Error deleting recipe:", error);
     }
 }
-// Function to Edit a Recipe
+// **Function to Edit a Recipe**
 async function editRecipe(recipeId, currentName, currentIngredients, currentCategory) {
     const newName = prompt("Enter new recipe name:", currentName);
     const newIngredients = prompt("Enter new ingredients (comma-separated):", currentIngredients);
@@ -688,7 +707,7 @@ async function editRecipe(recipeId, currentName, currentIngredients, currentCate
     }
     else alert("Recipe name and ingredients cannot be empty!");
 }
-// Event Listener for "Add Recipe" Button
+// **Event Listener for "Add Recipe" Button**
 document.getElementById("add-recipe").addEventListener("click", ()=>{
     const name = document.getElementById("recipe-name").value.trim();
     const ingredients = document.getElementById("recipe-ingredients").value.trim();
@@ -699,7 +718,7 @@ document.getElementById("add-recipe").addEventListener("click", ()=>{
         document.getElementById("recipe-ingredients").value = "";
     } else alert("Please enter a recipe name and ingredients.");
 });
-// AI Chatbot Functionality
+// **AI Chatbot Functionality**
 async function getAIResponse(userInput) {
     const requestBody = {
         contents: [
@@ -731,7 +750,7 @@ async function getAIResponse(userInput) {
         return "<strong>Error fetching response.</strong> Please try again.";
     }
 }
-// Handle User Input in Chatbot
+// **Handle User Input in Chatbot**
 document.getElementById("chat-send").addEventListener("click", async ()=>{
     const userInput = document.getElementById("chat-input").value.trim();
     if (!userInput) return;
@@ -741,16 +760,13 @@ document.getElementById("chat-send").addEventListener("click", async ()=>{
     document.getElementById("chat-input").value = "";
     addMessageToChatbox("AI", aiResponse);
 });
-// Service Worker Function
+// **Service Worker Registration**
 const sw = new URL(require("1af212957683a01b"));
-if ('serviceWorker' in navigator) {
-    const s = navigator.serviceWorker;
-    s.register(sw.href, {
-        scope: '/RecipeOrganizer/'
-    }).then((_)=>console.log('Service Worker Registered for scope:', sw.href, 'with', "file:///script.js")).catch((err)=>console.error('Service Worker Error:', err));
-}
-// Load Recipes and UI on Page Load
-document.addEventListener("DOMContentLoaded", updateUI);
+if ('serviceWorker' in navigator) navigator.serviceWorker.register(sw.href, {
+    scope: '/RecipeOrganizer/'
+}).then((_)=>console.log('Service Worker Registered:', sw.href)).catch((err)=>console.error('Service Worker Error:', err));
+// **Load Recipes and UI on Page Load**
+document.addEventListener("DOMContentLoaded", renderRecipes);
 
 },{"./firebase.js":"dBiHI","1af212957683a01b":"7oDkf"}],"7oDkf":[function(require,module,exports,__globalThis) {
 module.exports = require("bd4ba1843f7ed88e").getBundleURL('fqV6O') + "service-worker.75769289.js" + "?" + Date.now();
