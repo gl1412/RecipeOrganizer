@@ -1,8 +1,7 @@
 import { db, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, query, where } from "./firebase.js";
 import { auth, provider, signInWithPopup, signOut, AI_API_KEY, AI_API_URL } from "./firebase.js"; // Import authentication functions
 
-
-// 🔹 Login Function (Google Sign-In)
+// Login Function (Google Sign-In)
 document.getElementById("login-btn").addEventListener("click", async () => {
     try {
         const result = await signInWithPopup(auth, provider);
@@ -14,7 +13,7 @@ document.getElementById("login-btn").addEventListener("click", async () => {
     }
 });
 
-// 🔹 Logout Function
+// Logout Function
 document.getElementById("logout-btn").addEventListener("click", () => {
     signOut(auth).then(() => {
         localStorage.removeItem("email");
@@ -128,7 +127,7 @@ document.getElementById("add-recipe").addEventListener("click", () => {
     }
 });
 
-// 🔹 AI Chatbot Functionality
+// AI Chatbot Functionality
 async function getAIResponse(userInput) {
     const requestBody = {
         contents: [{ parts: [{ text: `You are an AI assistant for a Recipe Organizer app. Answer questions about its functionality and provide suggestions. Question: ${userInput}` }] }]
@@ -167,6 +166,19 @@ document.getElementById("chat-send").addEventListener("click", async () => {
     document.getElementById("chat-input").value = "";
     addMessageToChatbox("AI", aiResponse);
 });
+
+// Service Worker Function
+const sw = new URL('service-worker.js', import.meta.url)
+if ('serviceWorker' in navigator) {
+ const s = navigator.serviceWorker;
+ s.register(sw.href, {
+ scope: '/RecipeOrganizer/'
+ })
+ .then(_ => console.log('Service Worker Registered for scope:', sw.href,
+'with', import.meta.url))
+ .catch(err => console.error('Service Worker Error:', err));
+}
+
 
 // Load Recipes and UI on Page Load
 document.addEventListener("DOMContentLoaded", updateUI);

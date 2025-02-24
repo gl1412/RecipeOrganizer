@@ -1,0 +1,2 @@
+const e=["/RecipeOrganizer/","/RecipeOrganizer /index.html","/RecipeOrganizer /style.css","/RecipeOrganizer /script.js","/RecipeOrganizer /manifest.json","/RecipeOrganizer /icons/icon-128.png","/RecipeOrganizer /icons/icon-512.png"];self.addEventListener("install",i=>{i.waitUntil(caches.open("to-do-pwa-cache-v1").then(i=>i.addAll(e)))}),self.addEventListener("fetch",e=>{e.respondWith(caches.match(e.request).then(i=>i||fetch(e.request)))});
+//# sourceMappingURL=service-worker.b94753ee.js.map

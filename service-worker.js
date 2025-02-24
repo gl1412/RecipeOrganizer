@@ -3,7 +3,7 @@ const FILES_TO_CACHE = [
  '/RecipeOrganizer/',
  '/RecipeOrganizer /index.html',
  '/RecipeOrganizer /style.css',
- '/RecipeOrganizer /app.js',
+ '/RecipeOrganizer /script.js',
  '/RecipeOrganizer /manifest.json',
  '/RecipeOrganizer /icons/icon-128.png',
  '/RecipeOrganizer /icons/icon-512.png'
