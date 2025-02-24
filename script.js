@@ -1,5 +1,5 @@
-import { db, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, query, where } from "./firebase.js";
-import { auth, provider, signInWithPopup, signOut, AI_API_KEY, AI_API_URL } from "./firebase.js"; // Import authentication functions
+import { db, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, query, where } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+import { auth, provider, signInWithPopup, signOut, AI_API_KEY, AI_API_URL } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"; // Import authentication functions
 
 // Login Function (Google Sign-In)
 document.getElementById("login-btn").addEventListener("click", async () => {
