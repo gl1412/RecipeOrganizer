@@ -1,30 +1,50 @@
 import { db, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, query, where } from "./firebase.js";
-import { auth, provider, signInWithPopup, signOut, AI_API_KEY, AI_API_URL } from "./firebase.js"; // Import authentication functions
+import { auth, provider, signInWithPopup, signOut, AI_API_KEY, AI_API_URL } from "./firebase.js"; 
 
-// Login Function (Google Sign-In)
+// **Check if user is logged in on page load**
+document.addEventListener("DOMContentLoaded", () => {
+    const savedEmail = JSON.parse(localStorage.getItem("email"));
+    if (savedEmail) {
+        console.log("User is logged in:", savedEmail);
+        updateUI(true);
+    } else {
+        updateUI(false);
+    }
+    renderRecipes();
+});
+
+// **Login Function**
 document.getElementById("login-btn").addEventListener("click", async () => {
     try {
         const result = await signInWithPopup(auth, provider);
         localStorage.setItem("email", JSON.stringify(result.user.email));
         console.log("User signed in:", result.user.email);
-        updateUI();
+        updateUI(true);
     } catch (error) {
         console.error("Error during login:", error);
     }
 });
 
-// Logout Function
+// **Logout Function**
 document.getElementById("logout-btn").addEventListener("click", () => {
     signOut(auth).then(() => {
         localStorage.removeItem("email");
         console.log("User signed out");
-        updateUI();
+        updateUI(false);
     }).catch(error => console.error("Error during logout:", error));
 });
 
-// Function to Save Recipes to Firestore
+// **Update UI Based on Login State**
+function updateUI(isLoggedIn) {
+    document.getElementById("login-btn").style.display = isLoggedIn ? "none" : "inline-block";
+    document.getElementById("logout-btn").style.display = isLoggedIn ? "inline-block" : "none";
+    document.getElementById("recipe-form").style.display = isLoggedIn ? "block" : "none"; 
+    document.getElementById("recipe-list").style.display = "block";
+}
+
+// **Function to Save Recipes to Firestore**
 async function addRecipeToFirestore(name, ingredients, category) {
-    const email = JSON.parse(localStorage.getItem("email")); // Get user email
+    const email = JSON.parse(localStorage.getItem("email"));
     if (!email) {
         alert("You must be logged in to add recipes!");
         return;
@@ -34,7 +54,7 @@ async function addRecipeToFirestore(name, ingredients, category) {
         await addDoc(collection(db, "recipes"), {
             email: email,
             name: name,
-            ingredients: ingredients.split(",").map(i => i.trim()), // Convert string to array
+            ingredients: ingredients.split(",").map(i => i.trim()),
             category: category
         });
 
@@ -45,15 +65,19 @@ async function addRecipeToFirestore(name, ingredients, category) {
     }
 }
 
-// Function to Retrieve and Display Recipes from Firestore
+// **Function to Retrieve and Display Recipes from Firestore**
 async function renderRecipes() {
-    const email = JSON.parse(localStorage.getItem("email")); // Get user email
-    if (!email) return;
+    const email = JSON.parse(localStorage.getItem("email")); 
+    const recipesList = document.getElementById("recipes");
+    recipesList.innerHTML = "";
+
+    if (!email) {
+        recipesList.innerHTML = "<p>Please sign in to view your saved recipes.</p>";
+        return;
+    }
 
     const q = query(collection(db, "recipes"), where("email", "==", email));
     const data = await getDocs(q);
-    const recipesList = document.getElementById("recipes");
-    recipesList.innerHTML = ""; // Clear list before rendering
 
     data.forEach((docSnap) => {
         const recipe = docSnap.data();
@@ -76,7 +100,7 @@ async function renderRecipes() {
     });
 }
 
-// Function to Delete a Recipe from Firestore
+// **Function to Delete a Recipe from Firestore**
 async function deleteRecipe(recipeId) {
     if (confirm("Are you sure you want to delete this recipe?")) {
         try {
@@ -89,7 +113,7 @@ async function deleteRecipe(recipeId) {
     }
 }
 
-// Function to Edit a Recipe
+// **Function to Edit a Recipe**
 async function editRecipe(recipeId, currentName, currentIngredients, currentCategory) {
     const newName = prompt("Enter new recipe name:", currentName);
     const newIngredients = prompt("Enter new ingredients (comma-separated):", currentIngredients);
@@ -112,7 +136,7 @@ async function editRecipe(recipeId, currentName, currentIngredients, currentCate
     }
 }
 
-// Event Listener for "Add Recipe" Button
+// **Event Listener for "Add Recipe" Button**
 document.getElementById("add-recipe").addEventListener("click", () => {
     const name = document.getElementById("recipe-name").value.trim();
     const ingredients = document.getElementById("recipe-ingredients").value.trim();
@@ -127,7 +151,7 @@ document.getElementById("add-recipe").addEventListener("click", () => {
     }
 });
 
-// AI Chatbot Functionality
+// **AI Chatbot Functionality**
 async function getAIResponse(userInput) {
     const requestBody = {
         contents: [{ parts: [{ text: `You are an AI assistant for a Recipe Organizer app. Answer questions about its functionality and provide suggestions. Question: ${userInput}` }] }]
@@ -154,7 +178,7 @@ async function getAIResponse(userInput) {
     }
 }
 
-// Handle User Input in Chatbot
+// **Handle User Input in Chatbot**
 document.getElementById("chat-send").addEventListener("click", async () => {
     const userInput = document.getElementById("chat-input").value.trim();
     if (!userInput) return;
@@ -167,18 +191,13 @@ document.getElementById("chat-send").addEventListener("click", async () => {
     addMessageToChatbox("AI", aiResponse);
 });
 
-// Service Worker Function
-const sw = new URL('service-worker.js', import.meta.url)
+// **Service Worker Registration**
+const sw = new URL('service-worker.js', import.meta.url);
 if ('serviceWorker' in navigator) {
- const s = navigator.serviceWorker;
- s.register(sw.href, {
- scope: '/RecipeOrganizer/'
- })
- .then(_ => console.log('Service Worker Registered for scope:', sw.href,
-'with', import.meta.url))
- .catch(err => console.error('Service Worker Error:', err));
+    navigator.serviceWorker.register(sw.href, { scope: '/RecipeOrganizer/' })
+        .then(_ => console.log('Service Worker Registered:', sw.href))
+        .catch(err => console.error('Service Worker Error:', err));
 }
 
-
-// Load Recipes and UI on Page Load
-document.addEventListener("DOMContentLoaded", updateUI);
+// **Load Recipes and UI on Page Load**
+document.addEventListener("DOMContentLoaded", renderRecipes);
