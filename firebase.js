@@ -1,6 +1,6 @@
-import { initializeApp } from "./node_modules/firebase/app";
-import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, query, where } from "./node_modules/firebase/firestore";
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, query, where } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 
 //Firebase Configuration

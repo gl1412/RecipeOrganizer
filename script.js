@@ -1,5 +1,5 @@
-import { db, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, query, where } from "./firebase.js";
-import { auth, provider, signInWithPopup, signOut, AI_API_KEY, AI_API_URL } from "./firebase.js"; // Import authentication functions
+import { db, collection, addDoc, getDocs, deleteDoc, doc, updateDoc, query, where } from "https://your-github-username.github.io/RecipeOrganizer/firebase.js";
+import { auth, provider, signInWithPopup, signOut, AI_API_KEY, AI_API_URL } from "https://your-github-username.github.io/RecipeOrganizer/firebase.js";
 
 // Login Function (Google Sign-In)
 document.getElementById("login-btn").addEventListener("click", async () => {
