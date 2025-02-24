@@ -4,11 +4,11 @@
   "description": "A Recipe Organizer App",
   "type": "module",
   "scripts": {
-  "start": "parcel serve index.html --dist-dir dist --public-url ./",
-  "build": "parcel build index.html --dist-dir dist --no-content-hash --public-url ./",
-  "dev:build": "parcel build --dist-dir dist --no-content-hash index.html",
-  "dev:start": "parcel serve --dist-dir dist index.html",
-  "lint": "eslint ."
+    "start": "parcel serve index.html --dist-dir dist --public-url ./",
+    "build": "parcel build index.html --dist-dir dist --no-content-hash --public-url ./",
+    "dev:build": "parcel build --dist-dir dist --no-content-hash index.html",
+    "dev:start": "parcel serve --dist-dir dist index.html",
+    "lint": "eslint ."
   },
   "keywords": [],
   "author": "Gerry",
@@ -42,4 +42,3 @@
     "vm-browserify": "^1.1.2"
   }
 }
-
