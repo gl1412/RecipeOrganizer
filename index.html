@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Organizer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <h1>My Recipe Organizer</h1>
+        <button id="login-btn">Login</button>
+        <button id="logout-btn" style="display:none;">Logout</button>
+    </header>
+
+    <main>
+        <section id="recipe-form" style="display:none;">
+            <h2>Add a Recipe</h2>
+            <input type="text" id="recipe-name" placeholder="Recipe Name">
+            <textarea id="recipe-ingredients" placeholder="Ingredients (comma-separated)"></textarea>
+            <select id="recipe-category">
+                <option value="Breakfast">Breakfast</option>
+                <option value="Lunch">Lunch</option>
+                <option value="Dinner">Dinner</option>
+                <option value="Snack">Snack</option>
+            </select>
+            <button id="add-recipe">Add Recipe</button>
+        </section>
+
+        <section id="recipe-list" style="display:none;">
+            <h2>Saved Recipes</h2>
+            <ul id="recipes"></ul>
+        </section>
+
+           <!--  AI Chatbot Section -->
+    <section id="ai-chatbot">
+    <h2>AI Chatbot Assistant</h2>
+    <div id="chatbox">
+        <div id="chat-messages"></div>
+        <input type="text" id="chat-input" placeholder="Ask me anything about this app...">
+        <button id="chat-send">Send</button>
+    </div>
+</section>
+    </main>
+
+    <script type="module" src="/firebase.js"></script>
+    <script type="module" src="/script.js"></script>
+
+    <script>
+ if ('serviceWorker' in navigator) {
+ navigator.serviceWorker.register('service-worker.js', {
+ scope: '/RecipeOrganizer/'
+ })
+ .then(reg => console.log('Service Worker Registered'))
+ .catch(err => console.error('Service Worker Error:', err));
+ }
+</script>
+</body>
+</html>
