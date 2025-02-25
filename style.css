@@ -166,3 +166,9 @@ footer {
     font-size: 14px;
     color: #333;
 }
+
+#filter-ingredient, #filter-category {
+    width: 50%; 
+    display: inline-block;
+    box-sizing: border-box; 
+}

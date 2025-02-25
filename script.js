@@ -4,7 +4,7 @@ import { auth, provider, signInWithPopup, signOut, AI_API_KEY, AI_API_URL } from
 // Load recipes immediately on page load
 document.addEventListener("DOMContentLoaded", () => {
     renderRecipes();
-    updateUI(false); // Load UI without blocking login
+    updateUI(false); 
 });
 
 // Login Function
@@ -14,7 +14,7 @@ document.getElementById("login-btn").addEventListener("click", async () => {
         localStorage.setItem("email", JSON.stringify(result.user.email));
         console.log("User signed in:", result.user.email);
         updateUI(true);
-        renderRecipes(); // Refresh recipes to show user's saved recipes
+        renderRecipes(); 
     } catch (error) {
         console.error("Error during login:", error);
     }
@@ -26,7 +26,7 @@ document.getElementById("logout-btn").addEventListener("click", () => {
         localStorage.removeItem("email");
         console.log("User signed out");
         updateUI(false);
-        renderRecipes(); // Refresh recipes to show all public recipes
+        renderRecipes(); 
     }).catch(error => console.error("Error during logout:", error));
 });
 
